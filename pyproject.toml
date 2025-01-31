@@ -1,0 +1,19 @@
+[project]
+name = "todo-list-app-tk"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "GicheruBenjamin",email = "benjaminnjuguna77@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+start = "todo_list_app_tk:main"
