@@ -13,34 +13,34 @@ class Appinfo:
     """
     App settings.
     """
-    app_name : str = "Todoie"
-    version : str = "0.1.0"
-    author : str = "Gicheru Benjamin"
-    window_title : str = "Todoie"
-    description : str = "A simple todo list app"
-    window_size : tuple = (800, 600)
+    app_name : str 
+    version : str 
+    author : str 
+    window_title : str 
+    description : str 
+    window_size : tuple 
 
 @dataclass
 class Databasesettings:
     # Database settings for the app
     # Using SQLite
-    db_path : str = "/data/todoie.db"
-    db_name : str = "todoie"
-    db_timeout : int = 30
+    db_path : str 
+    db_name : str
+    db_timeout : int
 
 @dataclass
 class Theme:
     # A theme 
-    theme_name : str = "light"
+    theme_name : str 
     # Colors
-    primary_color : str = "#007bff"
-    bg_color : str = "#ffffff"
-    text_color : str = "#000000"
-    bordercolor : str = "#ced4da"
-    hover_color : str = "#007bff"
+    primary_color : str 
+    bg_color : str 
+    text_color : str 
+    bordercolor : str 
+    hover_color : str 
     # Typography
-    font_family : str = "Arial"
-    font_size : int = 14
-    font_weight : str = "normal"
+    font_family : str 
+    font_size : int 
+    font_weight : str 
 
 
