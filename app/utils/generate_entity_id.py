@@ -1,7 +1,7 @@
 # app/utils/generate_entity_id.py
 """
 Generate entity id.
-class EtityType:
+class EntityType:
     TASK = "task"
     CATEGORY = "category"
 ~generate_entity_id(type: EntityType) -> str:
@@ -10,7 +10,7 @@ class EtityType:
 """
 from enum import Enum
 from random import choices
-from string import ascii_letters, digits
+from string import ascii_letters, digits, ascii_uppercase
 
 class EntityType(Enum):
     TASK = "task"
@@ -30,7 +30,7 @@ def generate_entity_id(type: EntityType) -> str:
         return f"{letters}-{nums}-{mix}"
     
     elif type == EntityType.CATEGORY:
-        caps = "".join(choices(ascii_letters.upper(), k=2))
+        caps = "".join(choices(ascii_uppercase, k=2))
         nums = "".join(choices(digits, k=6))
         return f"{caps}{nums}"
     

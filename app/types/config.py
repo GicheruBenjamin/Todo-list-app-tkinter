@@ -7,9 +7,10 @@ Config types.
 """
 
 from dataclasses import dataclass
+from enum import Enum
 
 @dataclass
-class Appinfo:
+class AppInfo:
     """
     App settings.
     """
@@ -19,14 +20,23 @@ class Appinfo:
     window_title : str 
     description : str 
     window_size : tuple 
+    icon_path : str
 
 @dataclass
-class Databasesettings:
+class DatabaseSettings:
     # Database settings for the app
     # Using SQLite
     db_path : str 
     db_name : str
     db_timeout : int
+
+class FontWeight(Enum):
+    """
+    Font weight
+    """
+    NORMAL = "normal"
+    BOLD = "bold"
+    LIGHT = "light"
 
 @dataclass
 class Theme:

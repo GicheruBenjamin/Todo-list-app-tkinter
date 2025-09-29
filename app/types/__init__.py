@@ -1,15 +1,18 @@
 # app/types/__init__.py
-from .config import Appinfo, Databasesettings, Theme
+from .config import AppInfo, DatabaseSettings, Theme, FontWeight
 from .db_models import Task, Category, TaskStatus, TaskPriority, Occurrence, CategoryColor
+from .db_layer import DatabaseConnection
 
 __all__ = [
-    "Appinfo",
-    "Databasesettings",
+    "AppInfo",
+    "DatabaseSettings",
     "Theme",
+    "FontWeight",
     "Task",
     "Category",
     "TaskStatus",
     "TaskPriority",
     "Occurrence",
-    "CategoryColor"
+    "CategoryColor",
+    "DatabaseConnection"
 ]

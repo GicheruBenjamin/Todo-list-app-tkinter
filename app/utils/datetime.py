@@ -49,7 +49,15 @@ class DateUtils:
 
     @staticmethod
     def today(fmt: str = "%d/%m/%Y") -> str:
-        """
-        Get today's date as a string in the given format.
-        """
+        """Get today's date as a string in the given format."""
         return datetime.today().strftime(fmt)
+
+    @staticmethod
+    def to_iso(dt: datetime) -> str:
+        """Convert a datetime object to an ISO 8601 string."""
+        return dt.strftime("%Y-%m-%d")
+
+    @staticmethod
+    def from_iso(cast: str) -> datetime:
+        """ from_iso(cast: str) -> datetime"""
+        return datetime.strptime(cast, "%Y-%m-%d")
