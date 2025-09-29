@@ -1,32 +1,41 @@
 # app/config/__init__.py
 """
-Config module.
+App configuration package.
 """
+
+from dataclasses import dataclass
+
+from app.types import AppInfo, DatabaseSettings, Theme
+
 from .load_db_settings import load_db_settings
 from .provide_app_settings import provide_app_settings
 from .provide_theme_settings import provide_theme_settings
-#out modules 
-from app.types import AppInfo, DatabaseSettings, Theme
-# in modules
-from dataclasses import dataclass
+
 
 @dataclass
 class AppConfig:
-    app_info : AppInfo
-    db_settings : DatabaseSettings
-    theme : Theme
+    """
+    Aggregate application configuration.
+    """
+    app_info: AppInfo
+    db_settings: DatabaseSettings
+    theme: Theme
 
-def provide_app_config() -> AppConfig:
+
+def provide_app_config(
+    app_info: AppInfo | None = None,
+    db_settings: DatabaseSettings | None = None,
+    theme: Theme | None = None,
+) -> AppConfig:
     """
-    Provide app config.
+    Build and return the full application configuration.
+    Optional arguments allow overriding defaults, which
+    is useful for testing or custom environments.
     """
-    app_info = provide_app_settings()
-    db_settings = load_db_settings()
-    theme = provide_theme_settings()
     return AppConfig(
-        app_info = app_info,
-        db_settings = db_settings,
-        theme = theme
+        app_info=app_info or provide_app_settings(),
+        db_settings=db_settings or load_db_settings(),
+        theme=theme or provide_theme_settings(),
     )
 
 

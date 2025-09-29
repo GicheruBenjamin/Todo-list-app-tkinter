@@ -28,3 +28,7 @@ MANIFEST
 
 #Poetry
 poetry.lock
+
+# Database 
+*.db 
+*.sqlite

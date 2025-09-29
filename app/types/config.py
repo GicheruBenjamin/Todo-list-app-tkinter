@@ -7,6 +7,7 @@ Config types.
 """
 
 from dataclasses import dataclass
+from enum import Enum
 
 @dataclass
 class AppInfo:
@@ -19,6 +20,7 @@ class AppInfo:
     window_title : str 
     description : str 
     window_size : tuple 
+    icon_path : str
 
 @dataclass
 class DatabaseSettings:
