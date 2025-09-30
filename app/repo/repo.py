@@ -11,3 +11,5 @@ Class Repo:
      6. get_count(query:dict)
      7. check_if_exists(query:dict)
 """
+from app.types import DatabaseConnection
+

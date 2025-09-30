@@ -1,4 +1,8 @@
 # app/config/provide_theme_settings.py
+"""
+Provide theme settings.
+"""
+
 from app.types import Theme, FontWeight
 
 def provide_theme_settings() -> Theme:

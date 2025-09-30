@@ -8,49 +8,57 @@ Config types.
 
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
+
 
 @dataclass
 class AppInfo:
     """
     App settings.
     """
-    app_name : str 
-    version : str 
-    author : str 
-    window_title : str 
-    description : str 
-    window_size : tuple 
-    icon_path : str
+    app_name: str                  # Application name
+    version: str                   # Application version
+    author: str                    # Author name
+    window_title: str              # Window title for Tkinter
+    description: str               # Short app description
+    window_size: tuple[int, int]   # (width, height) of the main window
+    icon_path: Path                # Path to application icon (relative or absolute)
+
 
 @dataclass
 class DatabaseSettings:
-    # Database settings for the app
-    # Using SQLite
-    db_path : str 
-    db_name : str
-    db_timeout : int
+    """
+    Database settings for the app (using SQLite).
+    """
+    db_path: Path                  # Path to SQLite database file
+    db_name: str                   # Database logical name
+    db_timeout: int                # Timeout (seconds) for DB connections
+
 
 class FontWeight(Enum):
     """
-    Font weight
+    Font weight options.
     """
     NORMAL = "normal"
     BOLD = "bold"
     LIGHT = "light"
 
+
 @dataclass
 class Theme:
-    # A theme 
-    theme_name : str 
+    """
+    Theme configuration for the application UI.
+    """
+    theme_name: str                # Name of the theme (e.g., Light, Dark)
+
     # Colors
-    primary_color : str 
-    bg_color : str 
-    text_color : str 
-    bordercolor : str 
-    hover_color : str 
+    primary_color: str             # Main accent color
+    bg_color: str                  # Background color
+    text_color: str                # Primary text color
+    bordercolor: str               # Border color
+    hover_color: str               # Hover state background color
+
     # Typography
-    font_family : str 
-    font_size : int 
-    font_weight : str 
-
-
+    font_family: str               # Font family (e.g., Arial, Roboto)
+    font_size: int                 # Default font size
+    font_weight: FontWeight        # Font weight (Enum: NORMAL, BOLD, LIGHT)

@@ -1,7 +1,7 @@
 # app/db/__init__.py
-
-from .sqlitte_db import SqliteDb
+from .init_sqlite import init_sqlite, close_sqlite
 
 __all__ = [
-    "SqliteDb"
+    "init_sqlite",
+    "close_sqlite"
 ]

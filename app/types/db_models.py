@@ -1,5 +1,4 @@
-# app/types/db_models.py
-
+# app/types/db_models.py (Task, Category)
 """
 Database models.
 ~Task model
@@ -11,6 +10,7 @@ from typing import List, Optional
 from enum import Enum
 from datetime import datetime
 
+
 class TaskStatus(Enum):
     """ Task status """
     ACTIVE = "active"
@@ -18,20 +18,23 @@ class TaskStatus(Enum):
     ARCHIVED = "archived"
     DELETED = "deleted"
 
+
 class TaskPriority(Enum):
     """ Task priority """
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
 
+
 class Occurrence(Enum):
-    """ Occurrence """
+    """ Task occurrence frequency """
     DAILY = "daily"
     WEEKLY = "weekly"
     MONTHLY = "monthly"
 
+
 class CategoryColor(Enum):
-    """ Category color """
+    """ Category colors (hex values) """
     REDPURPLE   = "#ff3860"
     BLUEVIOLET  = "#3860ff"
     GREENYELLOW = "#ADFF2F"
@@ -39,29 +42,30 @@ class CategoryColor(Enum):
     ORANGE      = "#ff7f00"
     PINK        = "#ff00ff"
     PURPLE      = "#800080"
-    
+
 
 @dataclass
 class Task:
     """ Task model """
-    id : Optional[int]
-    task_id : str
-    task_name : str
-    task_description : str
-    status : TaskStatus
-    priority : TaskPriority
-    occurrence : Occurrence
-    due_date : str # dd/mm/yyyy
-    created_at : datetime
-    updated_at : datetime
-    category_id : Optional[str]
+    id: Optional[int]
+    task_id: str
+    task_name: str
+    task_description: str
+    status: TaskStatus
+    priority: TaskPriority
+    occurrence: Occurrence
+    due_date: str  # dd/mm/yyyy
+    created_at: datetime
+    updated_at: datetime
+    category_id: Optional[str]
+
 
 @dataclass
 class Category:
     """ Category model """
-    id : int
-    category_id : str
-    category_name : str
-    category_color : CategoryColor
-    created_at : datetime
-    updated_at : datetime
+    id: int
+    category_id: str
+    category_name: str
+    category_color: CategoryColor
+    created_at: datetime
+    updated_at: datetime

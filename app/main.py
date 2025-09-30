@@ -1,19 +1,22 @@
 # app/main.py
 
 # == Entry point ==
-from app.db import SqliteDb
-from app.config import provide_app_config, AppConfig
+from app.config import provide_app_settings, provide_theme_settings, load_db_settings
+from app.db import init_sqlite, close_sqlite
 
 def main():
-    ac : AppConfig = provide_app_config()
-    db : SqliteDb = SqliteDb(ac.db_settings)
-    db.connect()
-    if db.connection:
-        print("Connected to the database")
-        print(db.connection)
-        db.close()
-    else:
-        print("Failed to connect to the database")
+    app_settings = provide_app_settings()
+    theme_settings = provide_theme_settings()
+    db_settings = load_db_settings()
+
+    print(app_settings)
+    print(theme_settings)
+    print(db_settings)
+
+    connection = init_sqlite(db_settings)
+    print(connection)
+    close_sqlite(connection)
+
 
 
 
