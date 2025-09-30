@@ -1,8 +1,7 @@
-# app/db/migration_ddl.py
-
-# Migration_ddl for the tables and their columns
-# In the db..
-# app/db/migration_ddl.py
+# app/db/migration_ddl.py (MIGRATION_DDL)
+"""
+Migration DDL for the tables and their columns.
+"""
 
 # == Tables ==
 create_task_table = """
@@ -17,7 +16,8 @@ CREATE TABLE IF NOT EXISTS task (
     due_date TEXT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    category_id TEXT
+    category_id TEXT,
+    FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE SET NULL
 );
 """
 
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS category (
     category_id TEXT NOT NULL,
     category_name TEXT NOT NULL,
     category_color TEXT NOT NULL CHECK (category_color IN (
-        'red_purple', 'blue_violet', 'green_yellow', 'yellow_green', 'orange', 'pink'
+        '#ff3860', '#3860ff', '#ADFF2F', '#9ACD32', '#ff7f00', '#ff00ff', '#800080'
     )),
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
