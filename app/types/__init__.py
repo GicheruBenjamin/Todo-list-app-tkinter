@@ -2,6 +2,7 @@
 from .config import AppInfo, DatabaseSettings, Theme, FontWeight
 from .db_models import Task, Category, TaskStatus, TaskPriority, Occurrence, CategoryColor
 from .db_layer import DatabaseConnection
+from .repo_layer import Query, FilterCondition, FilterGroup, FilterLogic, FilterOperator, SortOrder
 
 __all__ = [
     "AppInfo",
@@ -14,5 +15,11 @@ __all__ = [
     "TaskPriority",
     "Occurrence",
     "CategoryColor",
-    "DatabaseConnection"
+    "DatabaseConnection",
+    "Query",
+    "FilterCondition",
+    "FilterGroup",
+    "FilterLogic",
+    "FilterOperator",
+    "SortOrder",
 ]
