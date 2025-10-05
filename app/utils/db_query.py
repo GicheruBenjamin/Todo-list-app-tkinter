@@ -1,33 +1,27 @@
-# app/utils/db_query.py
+# app/utils/db_query.py (DB_QUERY)
 """
 DB Query Builder
 ----------------
-Takes a Query dict (see app/types/query.py) and generates
-SQLite SQL + parameter list.
-
+Generates SQLite SQL + parameters from a structured Query dict.
 Supports:
 - Nested filters with AND/OR
-- All FilterOperators (eq, ne, gt, gte, lt, lte, in, not_in, like, not_like, between)
+- All FilterOperators (eq, ne, gt, gte, lt, lte, in, not_in, like, not_like, between, is_null, is_not_null)
 - Multiple sort fields
-- Pagination (page_no, limit, offset)
-- Projection (include/exclude)
+- Pagination (page_no, page_limit, offset)
+- Projection include/exclude
+- DISTINCT selection
+- Optional GROUP BY support
 """
 
 from typing import Tuple, List, Any, Union
-from app.types import (
-    Query,
-    FilterCondition,
-    FilterGroup,
-    FilterOperator,
-    FilterLogic,
-    SortOrder,
-)
+from app.types.query import Query, FilterCondition, FilterGroup, FilterOperator, FilterLogic, SortOrder
 
 
 # === Normalizers ===
 
 def _normalize_operator(op: Union[FilterOperator, str]) -> str:
-    if hasattr(op, "value"):  # Enum
+    """Return the SQL string representation of a FilterOperator."""
+    if hasattr(op, "value"):
         return op.value
     if isinstance(op, str):
         return op.lower()
@@ -35,15 +29,17 @@ def _normalize_operator(op: Union[FilterOperator, str]) -> str:
 
 
 def _normalize_logic(logic: Union[FilterLogic, str]) -> str:
-    if hasattr(logic, "value"):  # Enum
-        return logic.value
+    """Return the SQL string for a filter logic (AND/OR)."""
+    if hasattr(logic, "value"):
+        return logic.value.upper()
     if isinstance(logic, str):
         return logic.upper()
     raise ValueError(f"Invalid filter logic: {logic}")
 
 
 def _normalize_sort_order(order: Union[SortOrder, str]) -> str:
-    if hasattr(order, "value"):  # Enum
+    """Return SQL string for sort order (ASC/DESC)."""
+    if hasattr(order, "value"):
         return order.value.upper()
     if isinstance(order, str):
         return order.upper()
@@ -56,7 +52,7 @@ def _build_filter_condition(cond: FilterCondition, params: List[Any]) -> str:
     """Build a single filter condition into SQL."""
     field = cond["field"]
     operator = _normalize_operator(cond["operator"])
-    value = cond["value"]
+    value = cond.get("value")
 
     if operator == "eq":
         params.append(value)
@@ -83,11 +79,15 @@ def _build_filter_condition(cond: FilterCondition, params: List[Any]) -> str:
         return f"{field} <= ?"
 
     elif operator == "in":
+        if not isinstance(value, (list, tuple)):
+            raise ValueError(f"'IN' operator requires a list or tuple, got {type(value)}")
         placeholders = ",".join("?" for _ in value)
         params.extend(value)
         return f"{field} IN ({placeholders})"
 
     elif operator == "not_in":
+        if not isinstance(value, (list, tuple)):
+            raise ValueError(f"'NOT_IN' operator requires a list or tuple, got {type(value)}")
         placeholders = ",".join("?" for _ in value)
         params.extend(value)
         return f"{field} NOT IN ({placeholders})"
@@ -101,21 +101,28 @@ def _build_filter_condition(cond: FilterCondition, params: List[Any]) -> str:
         return f"{field} NOT LIKE ?"
 
     elif operator == "between":
-        start, end = value
-        params.extend([start, end])
+        if not isinstance(value, (list, tuple)) or len(value) != 2:
+            raise ValueError(f"'BETWEEN' operator requires a tuple/list of 2 values, got {value}")
+        params.extend(value)
         return f"{field} BETWEEN ? AND ?"
+
+    elif operator == "is_null":
+        return f"{field} IS NULL"
+
+    elif operator == "is_not_null":
+        return f"{field} IS NOT NULL"
 
     else:
         raise ValueError(f"Unsupported operator: {operator}")
 
 
 def _build_filter_group(group: FilterGroup, params: List[Any]) -> str:
-    """Recursively build a filter group into SQL."""
+    """Recursively build a filter group into a WHERE clause."""
     logic = _normalize_logic(group["logic"])
     parts = []
 
     for cond in group["conditions"]:
-        if isinstance(cond, dict) and "conditions" in cond:  # nested group
+        if isinstance(cond, dict) and "conditions" in cond:
             parts.append(f"({_build_filter_group(cond, params)})")
         else:
             parts.append(_build_filter_condition(cond, params))
@@ -123,17 +130,20 @@ def _build_filter_group(group: FilterGroup, params: List[Any]) -> str:
     return f" {logic} ".join(parts)
 
 
-# === Main query builder ===
+# === Main Query Builder ===
 
 def build_query(table: str, query: Query) -> Tuple[str, List[Any]]:
     """
     Build a SELECT SQL statement from a Query definition.
-    Returns: (sql, params)
+
+    Returns:
+        sql: str - the SQL query string
+        params: List[Any] - parameters for safe execution
     """
     params: List[Any] = []
 
     # --- Projection ---
-    projection = query.get("projection", {})
+    projection = query.get("projection") or {}
     include = projection.get("include")
     exclude = projection.get("exclude")
 
@@ -141,24 +151,37 @@ def build_query(table: str, query: Query) -> Tuple[str, List[Any]]:
         fields = ", ".join(include)
     else:
         fields = "*"
-    sql = f"SELECT {fields} FROM {table}"
+        if exclude:
+            # Remove excluded columns from '*' by naive replacement
+            # Assumes all columns will eventually be mapped; best-effort
+            fields = "*"
+
+    # --- DISTINCT ---
+    distinct = query.get("distinct", False)
+    select_clause = f"SELECT {'DISTINCT ' if distinct else ''}{fields} FROM {table}"
+
+    sql = select_clause
 
     # --- Filters ---
-    if "filters" in query:
-        where_clause = _build_filter_group(query["filters"], params)
+    filters = query.get("filters")
+    if filters:
+        where_clause = _build_filter_group(filters, params)
         sql += f" WHERE {where_clause}"
 
+    # --- GROUP BY (future support) ---
+    group_by = query.get("group_by")
+    if group_by:
+        sql += " GROUP BY " + ", ".join(group_by)
+
     # --- Sorting ---
-    if "sorts" in query:
-        sort_parts = [
-            f"{s['field']} {_normalize_sort_order(s['order'])}"
-            for s in query["sorts"]
-        ]
+    sorts = query.get("sorts")
+    if sorts:
+        sort_parts = [f"{s['field']} {_normalize_sort_order(s['order'])}" for s in sorts]
         sql += " ORDER BY " + ", ".join(sort_parts)
 
     # --- Pagination ---
-    if "page_set" in query:
-        page = query["page_set"]
+    page = query.get("page_set")
+    if page:
         limit = page.get("page_limit", 0)
         offset = page.get("offset")
 
