@@ -1,12 +1,14 @@
 # app/components/__init__.py
 """
-Components Package
+Components package.
 ------------------
-Tkinter-based UI components for the app.
+Contains Tkinter UI components for the application.
 """
 
-from .main_component import MainComponent
-from .task_component import TaskComponent
 from .category_component import CategoryComponent
+from .task_component import TaskComponent
 
-__all__ = ["MainComponent", "TaskComponent", "CategoryComponent"]
+__all__ = [
+    "CategoryComponent",
+    "TaskComponent",
+]
