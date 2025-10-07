@@ -42,3 +42,8 @@ def init_repos(connection: DatabaseConnection) -> Repos:
         task=Repo(connection, "task"),
         category=Repo(connection, "category"),
     )
+
+__all__ = [
+    "Repos",
+    "init_repos",
+]
