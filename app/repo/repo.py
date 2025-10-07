@@ -17,7 +17,7 @@ Supported operations:
 
 from typing import Any, List, Optional, Dict
 from app.types import DatabaseConnection, Query
-from app.utils.build_query import build_query
+from app.utils.db_query import build_query
 
 
 class Repo:
